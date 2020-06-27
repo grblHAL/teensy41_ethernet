@@ -2,26 +2,26 @@
 
 put this repo in your sketchbook/libraries/
 
-libraries/lwip-ftpd-sd/    put this in your sketchbook/libraries/  for ftpd
+- libraries/lwip-ftpd-sd/    put this in your sketchbook/libraries/  for ftpd
 
 Things under examples/
-  teensy41_ethernet/ Paul's low-level ethernet sketch with hand-crafted packets
-  etherraw/         UDP additions to Paul's low-level ethernet sketch, hand-crafted UDP packets
-  lwip_dns/         demonstrate DNS queries
-  lwip_echosrv/     TCP and UDP echo servers on port 7
-  lwip_ftpd/        lwIP ftpd server (get/put) using SD lib and lwip-ftpd-sd lib
-  lwip_httpd/       lwIP web server using SD lib and microSD
-  lwip_httpd_sdfat/ lwIP web server using SdFat-beta v2 and microSD
-  lwip_iperf/       TCP iperf(v2) server on port 5001
-  lwip_mcast/       multicast listener, does one chirp
-  lwip_perf/        various UDP/TCP client/server tests
-  lwip_sntp/        NTP (UDP) poll of server (default 10 minutes)
-  lwip_tftpd/       tftp server (UDP) using SD lib and microSD
-  lwip_tftpd_sdfat/ tftp server (UDP) using SdFat-beta v2 and microSD
-  lwip_tftpd_SPIFFS/  tftp server (UDP) using SPIFFS lib EFLASH
-  lwip_webclnt/     send http GET to a web server
-  lwip_websrv/      serve up embedded html and manipulate LED
-  lwip_1588_timer/  read the 1588/PTP timer
+- teensy41_ethernet/ Paul's low-level ethernet sketch with hand-crafted packets
+- etherraw/         UDP additions to Paul's low-level ethernet sketch, hand-crafted UDP packets
+- lwip_dns/         demonstrate DNS queries
+- lwip_echosrv/     TCP and UDP echo servers on port 7
+- lwip_ftpd/        lwIP ftpd server (get/put) using SD lib and lwip-ftpd-sd lib
+- lwip_httpd/       lwIP web server using SD lib and microSD
+- lwip_httpd_sdfat/ lwIP web server using SdFat-beta v2 and microSD
+- lwip_iperf/       TCP iperf(v2) server on port 5001
+- lwip_mcast/       multicast listener, does one chirp
+- lwip_perf/        various UDP/TCP client/server tests
+- lwip_sntp/        NTP (UDP) poll of server (default 10 minutes)
+- lwip_tftpd/       tftp server (UDP) using SD lib and microSD
+- lwip_tftpd_sdfat/ tftp server (UDP) using SdFat-beta v2 and microSD
+- lwip_tftpd_SPIFFS/  tftp server (UDP) using SPIFFS lib EFLASH
+- lwip_webclnt/     send http GET to a web server
+- lwip_websrv/      serve up embedded html and manipulate LED
+- lwip_1588_timer/  read the 1588/PTP timer
 
 
 The lwip lib (2.0.2) and apps are adapted from the 2016 T3.6 beta test of 
@@ -36,6 +36,7 @@ TODO:
 
 --------------------------------------------------------------------
 
+```
                          Ethernet performance
                    T41e   1062SDK  T41USBe  T35e  T4+W5500    info
 TCP xmit (mbs)       73        87      78     59         9 
@@ -59,7 +60,10 @@ tftp    4.76        2.2          2.2 s
 http    3.6         0.9          0.9
 ftp     2.8         0.6  
 read()  2.76        0.26         0.19 s
+```
+
 -----------------------------------------------------------------------
+
 References:
 https://forum.pjrc.com/threads/60532-Teensy-4-1-Beta-Test?p=237096&viewfull=1#post237096
 https://forum.pjrc.com/threads/59776-Ethernet-and-lwip?p=230993&viewfull=1#post230993  private 
