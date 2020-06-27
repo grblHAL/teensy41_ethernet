@@ -1,4 +1,4 @@
-    Teensy 4.1 ethernet :: https://forum.pjrc.com/threads/59776-Ethernet-and-lwip
+## Teensy 4.1 ethernet :: https://forum.pjrc.com/threads/59776-Ethernet-and-lwip
 
 put this repo in your sketchbook/libraries/
 
@@ -32,7 +32,7 @@ https://forum.pjrc.com/threads/34808-K66-Beta-Test?p=109161&viewfull=1#post10916
 
 
 TODO:
-  -update lwIP
+- update lwIP
 
 --------------------------------------------------------------------
 
@@ -65,11 +65,10 @@ read()  2.76        0.26         0.19 s
 -----------------------------------------------------------------------
 
 References:
-https://forum.pjrc.com/threads/60532-Teensy-4-1-Beta-Test?p=237096&viewfull=1#post237096
-https://forum.pjrc.com/threads/59776-Ethernet-and-lwip?p=230993&viewfull=1#post230993  private 
-https://forum.pjrc.com/threads/34808-K66-Beta-Test?p=109161&viewfull=1#post109161
-https://forum.pjrc.com/threads/57701-USB-Host-Ethernet-Driver?p=218866&viewfull=1#post218866
-https://forum.pjrc.com/threads/54265-Teensy-4-testing-mbed-NXP-MXRT1050-EVKB-(600-Mhz-M7)
-https://github.com/manitou48/DUEZoo/blob/master/wizperf.txt
-
-https://forum.pjrc.com/threads/60857-T4-1-Ethernet-Library FNET NativeEthernet
+- https://forum.pjrc.com/threads/60532-Teensy-4-1-Beta-Test?p=237096&viewfull=1#post237096
+- https://forum.pjrc.com/threads/59776-Ethernet-and-lwip?p=230993&viewfull=1#post230993  (private)
+- https://forum.pjrc.com/threads/34808-K66-Beta-Test?p=109161&viewfull=1#post109161
+- https://forum.pjrc.com/threads/57701-USB-Host-Ethernet-Driver?p=218866&viewfull=1#post218866
+- https://forum.pjrc.com/threads/54265-Teensy-4-testing-mbed-NXP-MXRT1050-EVKB-(600-Mhz-M7)
+- https://github.com/manitou48/DUEZoo/blob/master/wizperf.txt
+- https://forum.pjrc.com/threads/60857-T4-1-Ethernet-Library FNET NativeEthernet
