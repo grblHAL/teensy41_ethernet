@@ -130,7 +130,8 @@ static uint8_t txbufs[TX_SIZE * BFSIZE] __attribute__((aligned(32)));
 volatile static enetbufferdesc_t *p_rxbd = &rx_ring[0];
 volatile static enetbufferdesc_t *p_txbd = &tx_ring[0];
 static struct netif t41_netif;
-static rx_frame_fn rx_callback;
+static rx_frame_fn rx_callback = NULL;
+static tx_timestamp_fn tx_timestamp_callback = NULL;
 static volatile uint32_t rx_ready;
 
 void enet_isr();
@@ -320,7 +321,7 @@ static void t41_low_level_init()
     ENET_GAUR = 0;
     ENET_GALR = 0;
 
-    ENET_EIMR = ENET_EIMR_RXF;
+    ENET_EIMR = ENET_EIMR_RXF | ENET_EIMR_TS_AVAIL;
 	attachInterruptVector(IRQ_ENET, enet_isr);
     NVIC_ENABLE_IRQ(IRQ_ENET);
 
@@ -374,6 +375,11 @@ static struct pbuf *t41_low_level_input(volatile enetbufferdesc_t *bdPtr)
     return p;
 }
 
+static uint8_t txTimestampEnabled = 0;
+void enet_txTimestampNextPacket() {
+    txTimestampEnabled = 1;
+}
+
 err_t t41_low_level_output(struct netif *netif, struct pbuf *p)
 {
     volatile enetbufferdesc_t *bdPtr = p_txbd;
@@ -383,6 +389,10 @@ err_t t41_low_level_output(struct netif *netif, struct pbuf *p)
     bdPtr->length = pbuf_copy_partial(p, bdPtr->buffer, p->tot_len, 0);
 
     bdPtr->extend1 &= kEnetTxBdIpHdrChecksum | kEnetTxBdProtChecksum;
+    if(txTimestampEnabled) {
+	bdPtr->extend1 |= kEnetTxBdTimeStamp;
+	txTimestampEnabled = 0;
+    }
     bdPtr->status = (bdPtr->status & kEnetTxBdWrap) | kEnetTxBdTransmitCrc | kEnetTxBdLast | kEnetTxBdReady;
 
     ENET_TDAR = ENET_TDAR_TDAR;
@@ -431,12 +441,22 @@ inline volatile static enetbufferdesc_t* rxbd_next()
     return p_bd;
 }
 
+void enet_set_tx_timestamp_callback(tx_timestamp_fn tx_cb) {
+    tx_timestamp_callback = tx_cb;
+}
+
 void enet_isr()
 {
+    if (ENET_EIR & ENET_EIR_TS_AVAIL) {
+        ENET_EIR = ENET_EIR_TS_AVAIL;
+        if (tx_timestamp_callback) {
+            tx_timestamp_callback(ENET_ATSTMP);
+        }
+    }
     //struct pbuf *p;
-    while (ENET_EIR & ENET_EIMR_RXF)
+    while (ENET_EIR & ENET_EIR_RXF)
     {
-        ENET_EIR = ENET_EIMR_RXF;
+        ENET_EIR = ENET_EIR_RXF;
         if (rx_callback) {
             //p = enet_rx_next();
             rx_callback(NULL);
