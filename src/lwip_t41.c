@@ -157,33 +157,33 @@ const char *lwip_strerr(err_t err)
 // read a PHY register (using MDIO & MDC signals)
 uint16_t mdio_read(int phyaddr, int regaddr)
 {
-	ENET_MMFR = ENET_MMFR_ST(1) | ENET_MMFR_OP(2) | ENET_MMFR_TA(0)
-		| ENET_MMFR_PA(phyaddr) | ENET_MMFR_RA(regaddr);
-	// TODO: what is the proper value for ENET_MMFR_TA ???
-	//int count=0;
-	while ((ENET_EIR & ENET_EIR_MII) == 0) {
-		//count++; // wait
-	}
-	//print("mdio read waited ", count);
-	uint16_t data = ENET_MMFR;
-	ENET_EIR = ENET_EIR_MII;
-	//printhex("mdio read:", data);
-	return data;
+    ENET_MMFR = ENET_MMFR_ST(1) | ENET_MMFR_OP(2) | ENET_MMFR_TA(0)
+        | ENET_MMFR_PA(phyaddr) | ENET_MMFR_RA(regaddr);
+    // TODO: what is the proper value for ENET_MMFR_TA ???
+    //int count=0;
+    while ((ENET_EIR & ENET_EIR_MII) == 0) {
+        //count++; // wait
+    }
+    //print("mdio read waited ", count);
+    uint16_t data = ENET_MMFR;
+    ENET_EIR = ENET_EIR_MII;
+    //printhex("mdio read:", data);
+    return data;
 }
 
 // write a PHY register (using MDIO & MDC signals)
 void mdio_write(int phyaddr, int regaddr, uint16_t data)
 {
-	ENET_MMFR = ENET_MMFR_ST(1) | ENET_MMFR_OP(1) | ENET_MMFR_TA(0)
-		| ENET_MMFR_PA(phyaddr) | ENET_MMFR_RA(regaddr) | ENET_MMFR_DATA(data);
-	// TODO: what is the proper value for ENET_MMFR_TA ???
-	int count=0;
-	while ((ENET_EIR & ENET_EIR_MII) == 0) {
-		count++; // wait
-	}
-	ENET_EIR = ENET_EIR_MII;
-	//print("mdio write waited ", count);
-	//printhex("mdio write :", data);
+    ENET_MMFR = ENET_MMFR_ST(1) | ENET_MMFR_OP(1) | ENET_MMFR_TA(0)
+        | ENET_MMFR_PA(phyaddr) | ENET_MMFR_RA(regaddr) | ENET_MMFR_DATA(data);
+    // TODO: what is the proper value for ENET_MMFR_TA ???
+    int count=0;
+    while ((ENET_EIR & ENET_EIR_MII) == 0) {
+        count++; // wait
+    }
+    ENET_EIR = ENET_EIR_MII;
+    //print("mdio write waited ", count);
+    //printhex("mdio write :", data);
 }
 
 
@@ -191,71 +191,71 @@ void mdio_write(int phyaddr, int regaddr, uint16_t data)
 
 static void t41_low_level_init()
 {
-	CCM_CCGR1 |= CCM_CCGR1_ENET(CCM_CCGR_ON);
-	// configure PLL6 for 50 MHz, pg 1173
-	CCM_ANALOG_PLL_ENET_CLR = CCM_ANALOG_PLL_ENET_POWERDOWN
-		| CCM_ANALOG_PLL_ENET_BYPASS | 0x0F;
-	CCM_ANALOG_PLL_ENET_SET = CCM_ANALOG_PLL_ENET_ENABLE | CCM_ANALOG_PLL_ENET_BYPASS
-		/*| CCM_ANALOG_PLL_ENET_ENET2_REF_EN*/ | CCM_ANALOG_PLL_ENET_ENET_25M_REF_EN
-		/*| CCM_ANALOG_PLL_ENET_ENET2_DIV_SELECT(1)*/ | CCM_ANALOG_PLL_ENET_DIV_SELECT(1);
-	while (!(CCM_ANALOG_PLL_ENET & CCM_ANALOG_PLL_ENET_LOCK)) ; // wait for PLL lock
-	CCM_ANALOG_PLL_ENET_CLR = CCM_ANALOG_PLL_ENET_BYPASS;
-//	Serial.printf("PLL6 = %08X (should be 80202001)\n", CCM_ANALOG_PLL_ENET);
-	// configure REFCLK to be driven as output by PLL6, pg 326
+    CCM_CCGR1 |= CCM_CCGR1_ENET(CCM_CCGR_ON);
+    // configure PLL6 for 50 MHz, pg 1173
+    CCM_ANALOG_PLL_ENET_CLR = CCM_ANALOG_PLL_ENET_POWERDOWN
+        | CCM_ANALOG_PLL_ENET_BYPASS | 0x0F;
+    CCM_ANALOG_PLL_ENET_SET = CCM_ANALOG_PLL_ENET_ENABLE | CCM_ANALOG_PLL_ENET_BYPASS
+        /*| CCM_ANALOG_PLL_ENET_ENET2_REF_EN*/ | CCM_ANALOG_PLL_ENET_ENET_25M_REF_EN
+        /*| CCM_ANALOG_PLL_ENET_ENET2_DIV_SELECT(1)*/ | CCM_ANALOG_PLL_ENET_DIV_SELECT(1);
+    while (!(CCM_ANALOG_PLL_ENET & CCM_ANALOG_PLL_ENET_LOCK)) ; // wait for PLL lock
+    CCM_ANALOG_PLL_ENET_CLR = CCM_ANALOG_PLL_ENET_BYPASS;
+//  Serial.printf("PLL6 = %08X (should be 80202001)\n", CCM_ANALOG_PLL_ENET);
+    // configure REFCLK to be driven as output by PLL6, pg 326
 #if 1
-	CLRSET(IOMUXC_GPR_GPR1, IOMUXC_GPR_GPR1_ENET1_CLK_SEL | IOMUXC_GPR_GPR1_ENET_IPG_CLK_S_EN,
-		IOMUXC_GPR_GPR1_ENET1_TX_CLK_DIR);
+    CLRSET(IOMUXC_GPR_GPR1, IOMUXC_GPR_GPR1_ENET1_CLK_SEL | IOMUXC_GPR_GPR1_ENET_IPG_CLK_S_EN,
+        IOMUXC_GPR_GPR1_ENET1_TX_CLK_DIR);
 #else
-	//IOMUXC_GPR_GPR1 &= ~IOMUXC_GPR_GPR1_ENET1_TX_CLK_DIR; // do not use
-	IOMUXC_GPR_GPR1 |= IOMUXC_GPR_GPR1_ENET1_TX_CLK_DIR; // 50 MHz REFCLK
-	IOMUXC_GPR_GPR1 &= ~IOMUXC_GPR_GPR1_ENET_IPG_CLK_S_EN;
-	//IOMUXC_GPR_GPR1 |= IOMUXC_GPR_GPR1_ENET_IPG_CLK_S_EN; // clock always on
-	IOMUXC_GPR_GPR1 &= ~IOMUXC_GPR_GPR1_ENET1_CLK_SEL;
-	////IOMUXC_GPR_GPR1 |= IOMUXC_GPR_GPR1_ENET1_CLK_SEL;
+    //IOMUXC_GPR_GPR1 &= ~IOMUXC_GPR_GPR1_ENET1_TX_CLK_DIR; // do not use
+    IOMUXC_GPR_GPR1 |= IOMUXC_GPR_GPR1_ENET1_TX_CLK_DIR; // 50 MHz REFCLK
+    IOMUXC_GPR_GPR1 &= ~IOMUXC_GPR_GPR1_ENET_IPG_CLK_S_EN;
+    //IOMUXC_GPR_GPR1 |= IOMUXC_GPR_GPR1_ENET_IPG_CLK_S_EN; // clock always on
+    IOMUXC_GPR_GPR1 &= ~IOMUXC_GPR_GPR1_ENET1_CLK_SEL;
+    ////IOMUXC_GPR_GPR1 |= IOMUXC_GPR_GPR1_ENET1_CLK_SEL;
 #endif
 
-	// configure pins
-	IOMUXC_SW_MUX_CTL_PAD_GPIO_B0_14 = 5; // Reset   B0_14 Alt5 GPIO7.15
-	IOMUXC_SW_MUX_CTL_PAD_GPIO_B0_15 = 5; // Power   B0_15 Alt5 GPIO7.14
-	GPIO7_GDIR |= (1<<14) | (1<<15);
-	GPIO7_DR_SET = (1<<15);   // power on
-	GPIO7_DR_CLEAR = (1<<14); // reset PHY chip
-	IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_04 = RMII_PAD_INPUT_PULLDOWN; // PhyAdd[0] = 0
-	IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_06 = RMII_PAD_INPUT_PULLDOWN; // PhyAdd[1] = 1
-	IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_05 = RMII_PAD_INPUT_PULLUP;   // Master/Slave = slave mode
-	IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_11 = RMII_PAD_INPUT_PULLDOWN; // Auto MDIX Enable
-	IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_07 = RMII_PAD_INPUT_PULLUP;
-	IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_08 = RMII_PAD_INPUT_PULLUP;
-	IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_09 = RMII_PAD_INPUT_PULLUP;
-	IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_10 = RMII_PAD_CLOCK;
-	IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_05 = 3; // RXD1    B1_05 Alt3, pg 525
-	IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_04 = 3; // RXD0    B1_04 Alt3, pg 524
-	IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_10 = 6 | 0x10; // REFCLK  B1_10 Alt6, pg 530
-	IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_11 = 3; // RXER    B1_11 Alt3, pg 531
-	IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_06 = 3; // RXEN    B1_06 Alt3, pg 526
-	IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_09 = 3; // TXEN    B1_09 Alt3, pg 529
-	IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_07 = 3; // TXD0    B1_07 Alt3, pg 527
-	IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_08 = 3; // TXD1    B1_08 Alt3, pg 528
-	IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_15 = 0; // MDIO    B1_15 Alt0, pg 535
-	IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_14 = 0; // MDC     B1_14 Alt0, pg 534
-	IOMUXC_ENET_MDIO_SELECT_INPUT = 2; // GPIO_B1_15_ALT0, pg 792
-	IOMUXC_ENET0_RXDATA_SELECT_INPUT = 1; // GPIO_B1_04_ALT3, pg 792
-	IOMUXC_ENET1_RXDATA_SELECT_INPUT = 1; // GPIO_B1_05_ALT3, pg 793
-	IOMUXC_ENET_RXEN_SELECT_INPUT = 1; // GPIO_B1_06_ALT3, pg 794
-	IOMUXC_ENET_RXERR_SELECT_INPUT = 1; // GPIO_B1_11_ALT3, pg 795
-	IOMUXC_ENET_IPG_CLK_RMII_SELECT_INPUT = 1; // GPIO_B1_10_ALT6, pg 791
-	delayMicroseconds(2);
-	GPIO7_DR_SET = (1<<14); // start PHY chip
-	ENET_MSCR = ENET_MSCR_MII_SPEED(9);
-	delayMicroseconds(5);
+    // configure pins
+    IOMUXC_SW_MUX_CTL_PAD_GPIO_B0_14 = 5; // Reset   B0_14 Alt5 GPIO7.15
+    IOMUXC_SW_MUX_CTL_PAD_GPIO_B0_15 = 5; // Power   B0_15 Alt5 GPIO7.14
+    GPIO7_GDIR |= (1<<14) | (1<<15);
+    GPIO7_DR_SET = (1<<15);   // power on
+    GPIO7_DR_CLEAR = (1<<14); // reset PHY chip
+    IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_04 = RMII_PAD_INPUT_PULLDOWN; // PhyAdd[0] = 0
+    IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_06 = RMII_PAD_INPUT_PULLDOWN; // PhyAdd[1] = 1
+    IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_05 = RMII_PAD_INPUT_PULLUP;   // Master/Slave = slave mode
+    IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_11 = RMII_PAD_INPUT_PULLDOWN; // Auto MDIX Enable
+    IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_07 = RMII_PAD_INPUT_PULLUP;
+    IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_08 = RMII_PAD_INPUT_PULLUP;
+    IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_09 = RMII_PAD_INPUT_PULLUP;
+    IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_10 = RMII_PAD_CLOCK;
+    IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_05 = 3; // RXD1    B1_05 Alt3, pg 525
+    IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_04 = 3; // RXD0    B1_04 Alt3, pg 524
+    IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_10 = 6 | 0x10; // REFCLK  B1_10 Alt6, pg 530
+    IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_11 = 3; // RXER    B1_11 Alt3, pg 531
+    IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_06 = 3; // RXEN    B1_06 Alt3, pg 526
+    IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_09 = 3; // TXEN    B1_09 Alt3, pg 529
+    IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_07 = 3; // TXD0    B1_07 Alt3, pg 527
+    IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_08 = 3; // TXD1    B1_08 Alt3, pg 528
+    IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_15 = 0; // MDIO    B1_15 Alt0, pg 535
+    IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_14 = 0; // MDC     B1_14 Alt0, pg 534
+    IOMUXC_ENET_MDIO_SELECT_INPUT = 2; // GPIO_B1_15_ALT0, pg 792
+    IOMUXC_ENET0_RXDATA_SELECT_INPUT = 1; // GPIO_B1_04_ALT3, pg 792
+    IOMUXC_ENET1_RXDATA_SELECT_INPUT = 1; // GPIO_B1_05_ALT3, pg 793
+    IOMUXC_ENET_RXEN_SELECT_INPUT = 1; // GPIO_B1_06_ALT3, pg 794
+    IOMUXC_ENET_RXERR_SELECT_INPUT = 1; // GPIO_B1_11_ALT3, pg 795
+    IOMUXC_ENET_IPG_CLK_RMII_SELECT_INPUT = 1; // GPIO_B1_10_ALT6, pg 791
+    delayMicroseconds(2);
+    GPIO7_DR_SET = (1<<14); // start PHY chip
+    ENET_MSCR = ENET_MSCR_MII_SPEED(9);
+    delayMicroseconds(5);
 
-	// LEDCR offset 0x18, set LED_Link_Polarity, pg 62
-	mdio_write(0, 0x18, 0x0280); // LED shows link status, active high
-	// RCSR offset 0x17, set RMII_Clock_Select, pg 61
-	mdio_write(0, 0x17, 0x0081); // config for 50 MHz clock input
+    // LEDCR offset 0x18, set LED_Link_Polarity, pg 62
+    mdio_write(0, 0x18, 0x0280); // LED shows link status, active high
+    // RCSR offset 0x17, set RMII_Clock_Select, pg 61
+    mdio_write(0, 0x17, 0x0081); // config for 50 MHz clock input
 
-	memset(rx_ring, 0, sizeof(rx_ring));
-	memset(tx_ring, 0, sizeof(tx_ring));
+    memset(rx_ring, 0, sizeof(rx_ring));
+    memset(tx_ring, 0, sizeof(tx_ring));
 
     for (int i = 0; i < RX_SIZE; i++)
     {
@@ -307,8 +307,8 @@ static void t41_low_level_init()
     ENET_TDSR = (uint32_t)tx_ring;
     ENET_MRBR = BFSIZE;
 
-	ENET_RXIC = 0;
-	ENET_TXIC = 0;
+    ENET_RXIC = 0;
+    ENET_TXIC = 0;
     ENET_PALR = mac[0] << 24 | mac[1] << 16 | mac[2] << 8 | mac[3];
     ENET_PAUR = mac[4] << 24 | mac[5] << 16 | 0x8808;
     
@@ -322,7 +322,7 @@ static void t41_low_level_init()
     ENET_GALR = 0;
 
     ENET_EIMR = ENET_EIMR_RXF | ENET_EIMR_TS_AVAIL;
-	attachInterruptVector(IRQ_ENET, enet_isr);
+    attachInterruptVector(IRQ_ENET, enet_isr);
     NVIC_ENABLE_IRQ(IRQ_ENET);
 
     ENET_ECR = 0xF0000000 | ENET_ECR_DBSWP | ENET_ECR_EN1588 | ENET_ECR_ETHEREN;
@@ -360,8 +360,8 @@ static struct pbuf *t41_low_level_input(volatile enetbufferdesc_t *bdPtr)
         p = pbuf_alloc(PBUF_RAW, bdPtr->length, PBUF_POOL);
         if (p) {
             pbuf_take(p, bdPtr->buffer, p->tot_len);
-			p->timestamp = bdPtr->timestamp;
-		}
+            p->timestamp = bdPtr->timestamp;
+        }
         if (NULL == p)
             LINK_STATS_INC(link.drop);
         else
@@ -390,8 +390,8 @@ err_t t41_low_level_output(struct netif *netif, struct pbuf *p)
 
     bdPtr->extend1 &= kEnetTxBdIpHdrChecksum | kEnetTxBdProtChecksum;
     if(txTimestampEnabled) {
-	bdPtr->extend1 |= kEnetTxBdTimeStamp;
-	txTimestampEnabled = 0;
+        bdPtr->extend1 |= kEnetTxBdTimeStamp;
+        txTimestampEnabled = 0;
     }
     bdPtr->status = (bdPtr->status & kEnetTxBdWrap) | kEnetTxBdTransmitCrc | kEnetTxBdLast | kEnetTxBdReady;
 
@@ -461,7 +461,7 @@ void enet_isr()
             //p = enet_rx_next();
             rx_callback(NULL);
         } else rx_ready = 1;
-		asm("dsb");
+        asm("dsb");
     }
 }
 
