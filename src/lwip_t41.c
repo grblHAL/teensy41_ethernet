@@ -383,15 +383,18 @@ void enet_txTimestampNextPacket() {
 err_t t41_low_level_output(struct netif *netif, struct pbuf *p)
 {
     volatile enetbufferdesc_t *bdPtr = p_txbd;
+    struct eth_hdr *ethhdr;
 
     while (bdPtr->status & kEnetTxBdReady);
 
     bdPtr->length = pbuf_copy_partial(p, bdPtr->buffer, p->tot_len, 0);
+    ethhdr = (struct eth_hdr *)bdPtr->buffer;
 
     bdPtr->extend1 &= kEnetTxBdIpHdrChecksum | kEnetTxBdProtChecksum;
-    if(txTimestampEnabled) {
-        bdPtr->extend1 |= kEnetTxBdTimeStamp;
-        txTimestampEnabled = 0;
+    // don't timestamp ARP packets
+    if(txTimestampEnabled && ethhdr->type == PP_HTONS(ETHTYPE_IP)) {
+	bdPtr->extend1 |= kEnetTxBdTimeStamp;
+	txTimestampEnabled = 0;
     }
     bdPtr->status = (bdPtr->status & kEnetTxBdWrap) | kEnetTxBdTransmitCrc | kEnetTxBdLast | kEnetTxBdReady;
 
