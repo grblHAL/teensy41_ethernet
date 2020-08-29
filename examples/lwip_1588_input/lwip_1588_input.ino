@@ -28,6 +28,7 @@ static uint32_t irq_count = 0;
 static void interrupt_1588_timer() {
   irq_count++;
   if(ENET_TCSR0 & ENET_TCSR_TF) ENET_TCSR0 = ENET_TCSR0;
+  asm volatile ("dsb"); // allow write to complete so the interrupt doesn't fire twice
 }
 
 // initialize the ethernet hardware
