@@ -204,6 +204,12 @@
 
 #define ETH_PAD_SIZE                    2
 
+// Number of IPv4 neighbors to store
+#define ARP_TABLE_SIZE                  10
+
+// Number of IPv6 neighbors to store
+#define LWIP_ND6_NUM_NEIGHBORS          10
+
 /*
    --------------------------------
    ---------- IP options ----------
@@ -264,6 +270,11 @@
  */
 #define IP_DEFAULT_TTL                  255
 
+// Enable IPv6
+#define LWIP_IPV6	1
+// Needed to manage multicast groups for v6
+#define LWIP_IPV6_MLD 1
+
 /*
    --------------------------------------
    ---------- Checksum options ----------
@@ -279,7 +290,7 @@
 #define CHECKSUM_GEN_UDP                0
 #define CHECKSUM_GEN_TCP                0
 #define CHECKSUM_GEN_ICMP               0
-#define CHECKSUM_GEN_ICMP6              0
+#define CHECKSUM_GEN_ICMP6              1
 #endif
 
 #define CHECKSUM_CHECK_IP               0

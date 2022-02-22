@@ -8,6 +8,7 @@
 #include "lwip/etharp.h"
 #include "netif/ethernet.h"
 #include "lwip/timeouts.h"
+#include "lwip/ethip6.h"
 
 #include "core_pins.h"
 
@@ -316,8 +317,10 @@ static void t41_low_level_init()
     ENET_RSEM = 0;
     ENET_MIBC = 0;
 
+    // Individual address hash rx filter
     ENET_IAUR = 0;
     ENET_IALR = 0;
+    // Multicast address hash rx filter
     ENET_GAUR = 0;
     ENET_GALR = 0;
 
@@ -407,12 +410,74 @@ err_t t41_low_level_output(struct netif *netif, struct pbuf *p)
     return ERR_OK;
 }
 
+// this could use the hardware crc32
+static uint32_t crc32(uint8_t *address, uint32_t bytes) {
+  uint32_t crc = 0xFFFFFFFFU;
+  uint32_t count1 = 0;
+  uint32_t count2 = 0;
+
+  /* Calculates the CRC-32 polynomial on the multicast group address. */
+  for (count1 = 0; count1 < bytes; count1++)
+  {
+    uint8_t c = address[count1];
+    for (count2 = 0; count2 < 0x08U; count2++)
+    {
+      if ((c ^ crc) & 1U)
+      {
+        crc >>= 1U;
+        c >>= 1U;
+        crc ^= 0xEDB88320U;
+      }
+      else
+      {
+        crc >>= 1U;
+        c >>= 1U;
+      }
+    }
+  }
+  return crc;
+}
+
+// multicast filter is 64 bit hash based on the crc32 of the mac address
+err_t t41_mld_mac_filter(struct netif *netif, const ip6_addr_t *group, enum netif_mac_filter_action action)
+{
+    // TODO: remove as well as add
+    if (action != NETIF_ADD_MAC_FILTER)
+      return ERR_OK;
+
+    // multicast mac address is 33:33:[lowest 32 bits of v6 address]
+    uint8_t address[6] = { 0x33, 0x33 };
+    memcpy(address + 2, group->addr + 3, 4);
+
+    uint32_t crc = crc32(address, sizeof(address));
+
+    // take the top 6 bits to determine which of the 64 bits to set
+    uint32_t hash = (crc >> 26) & 0x3f;
+
+    // if the upper bit is set, use GAUR otherwise GALR
+    if (hash & 0x20)
+        ENET_GAUR |= 1 << (hash & 0x1f);
+    else
+        ENET_GALR |= 1 << (hash & 0x1f);
+
+    return ERR_OK;
+}
+
 static err_t t41_netif_init(struct netif *netif)
 {
     netif->linkoutput = t41_low_level_output;
     netif->output = etharp_output;
     netif->mtu = 1522;
     netif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_ETHERNET | NETIF_FLAG_IGMP;
+
+#if LWIP_IPV6
+    netif->output_ip6 = ethip6_output;
+#endif
+#if LWIP_IPV6_MLD
+    netif->flags |= NETIF_FLAG_MLD6;
+    netif->mld_mac_filter = t41_mld_mac_filter;
+#endif
+
     MEMCPY(netif->hwaddr, mac, ETHARP_HWADDR_LEN);
     netif->hwaddr_len = ETHARP_HWADDR_LEN;
 #if LWIP_NETIF_HOSTNAME
@@ -422,6 +487,13 @@ static err_t t41_netif_init(struct netif *netif)
     netif->name[1] = '0';
 
     t41_low_level_init();
+
+#if LWIP_IPV6_MLD
+    // we need to listen to the all nodes multicast address for route advertisements
+    ip6_addr_t ip6_allnodes_ll;
+    ip6_addr_set_allnodes_linklocal(&ip6_allnodes_ll);
+    netif->mld_mac_filter(netif, &ip6_allnodes_ll, NETIF_ADD_MAC_FILTER);
+#endif
 
     return ERR_OK;
 }
