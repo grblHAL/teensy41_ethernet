@@ -395,9 +395,9 @@ err_t t41_low_level_output(struct netif *netif, struct pbuf *p)
 
     bdPtr->extend1 &= kEnetTxBdIpHdrChecksum | kEnetTxBdProtChecksum;
     // don't timestamp ARP packets
-    if(txTimestampEnabled && ethhdr->type == PP_HTONS(ETHTYPE_IP)) {
-	bdPtr->extend1 |= kEnetTxBdTimeStamp;
-	txTimestampEnabled = 0;
+    if(txTimestampEnabled && (ethhdr->type == PP_HTONS(ETHTYPE_IP) || ethhdr->type == PP_HTONS(ETHTYPE_IPV6))) {
+	    bdPtr->extend1 |= kEnetTxBdTimeStamp;
+	    txTimestampEnabled = 0;
     }
     bdPtr->status = (bdPtr->status & kEnetTxBdWrap) | kEnetTxBdTransmitCrc | kEnetTxBdLast | kEnetTxBdReady;
 
