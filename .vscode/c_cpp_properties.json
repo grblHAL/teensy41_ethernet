@@ -20,8 +20,8 @@
             ],
             "windowsSdkVersion": "10.0.19041.0",
             "compilerPath": "C:\\Program Files (x86)\\Arduino\\hardware\\tools\\arm\\bin\\arm-none-eabi-gcc",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
+            "cStandard": "c11",
+            "cppStandard": "c++11",
             "intelliSenseMode": "windows-gcc-arm",
             "compilerArgs": [
                 "-nostdlib"
