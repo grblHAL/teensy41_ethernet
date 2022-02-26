@@ -271,9 +271,9 @@
 #define IP_DEFAULT_TTL                  255
 
 // Enable IPv6
-#define LWIP_IPV6	1
+#define LWIP_IPV6	0
 // Needed to manage multicast groups for v6
-#define LWIP_IPV6_MLD 1
+#define LWIP_IPV6_MLD   LWIP_IPV6
 
 /*
    --------------------------------------

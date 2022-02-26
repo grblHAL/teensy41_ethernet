@@ -30,12 +30,16 @@ limited-production ethernet shield. T41 lwIP configured to use 64-byte aligned
 buffers (1536 bytes in DTCM). See
 https://forum.pjrc.com/threads/34808-K66-Beta-Test?p=109161&viewfull=1#post109161
 
+### Settings
 
-TODO:
+To enable ipv6, edit src/lwipopts.h and change LWIP_IPV6 to 1
+
+### TODO
 - update lwIP
 
 --------------------------------------------------------------------
 
+### Benchmarks
 ```
                          Ethernet performance
                    T41e   1062SDK  T41USBe  T35e  T4+W5500    info
@@ -64,7 +68,7 @@ read()  2.76        0.26         0.19 s
 
 -----------------------------------------------------------------------
 
-References:
+### References:
 - https://forum.pjrc.com/threads/60532-Teensy-4-1-Beta-Test?p=237096&viewfull=1#post237096
 - https://forum.pjrc.com/threads/59776-Ethernet-and-lwip?p=230993&viewfull=1#post230993  (private)
 - https://forum.pjrc.com/threads/34808-K66-Beta-Test?p=109161&viewfull=1#post109161
