@@ -438,6 +438,7 @@ static uint32_t crc32(uint8_t *address, uint32_t bytes) {
   return crc;
 }
 
+#if LWIP_IPV6_MLD
 // multicast filter is 64 bit hash based on the crc32 of the mac address
 err_t t41_mld_mac_filter(struct netif *netif, const ip6_addr_t *group, enum netif_mac_filter_action action)
 {
@@ -462,6 +463,7 @@ err_t t41_mld_mac_filter(struct netif *netif, const ip6_addr_t *group, enum neti
 
     return ERR_OK;
 }
+#endif
 
 static err_t t41_netif_init(struct netif *netif)
 {
