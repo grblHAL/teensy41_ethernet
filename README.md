@@ -1,6 +1,6 @@
 ## Teensy 4.1 ethernet :: https://forum.pjrc.com/threads/59776-Ethernet-and-lwip
 
-Updated to lwIP 2.1.3, lwipopts.h modified for [grblHAL iuMXRT1062 driver](https://github.com/grblHAL/iMXRT1062).
+Updated to lwIP 2.1.3, lwipopts.h modified for [grblHAL iMXRT1062 driver](https://github.com/grblHAL/iMXRT1062).
 
 put this repo in your sketchbook/libraries/
 
