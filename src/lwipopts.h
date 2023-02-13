@@ -38,9 +38,13 @@
 #ifndef LWIP_LWIPOPTS_H
 #define LWIP_LWIPOPTS_H
 
+// grblHAL defaults
+#define LWIP_NUM_NETIF_CLIENT_DATA      2
+#define LWIP_MDNS_RESPONDER             1
+
 // thd stuff
 //  default was 2 *
-#define TCP_SND_BUF                 (4 * TCP_MSS)
+#define TCP_SND_BUF                     (4 * TCP_MSS)
 
 /*
    -----------------------------------------------
@@ -87,19 +91,21 @@
  * MEM_SIZE: the size of the heap memory. If the application will send
  * a lot of data that needs to be copied, this should be set high.
  */
-#define MEM_SIZE                        24000
+#define MEM_SIZE                        (32*1024)
 
 /*
    ------------------------------------------------
    ---------- Internal Memory Pool Sizes ----------
    ------------------------------------------------
 */
+
+
 /**
  * MEMP_NUM_PBUF: the number of memp struct pbufs (used for PBUF_ROM and PBUF_REF).
  * If the application sends a lot of data out of ROM (or other static memory),
  * this should be set high.
  */
-//#define MEMP_NUM_PBUF                   30
+#define MEMP_NUM_PBUF                   48
 
 /**
  * MEMP_NUM_RAW_PCB: Number of raw connection PCBs
@@ -118,7 +124,7 @@
  * MEMP_NUM_TCP_PCB: the number of simulatenously active TCP connections.
  * (requires the LWIP_TCP option)
  */
-#define MEMP_NUM_TCP_PCB                8
+#define MEMP_NUM_TCP_PCB                16
 
 /**
  * MEMP_NUM_TCP_PCB_LISTEN: the number of listening TCP connections.
@@ -146,8 +152,9 @@
  * The formula expects settings to be either '0' or '1'.
  *
  * To this default value, 1 was added for the snmp_increment timer.
+ * grblHAL: added timeouts for SSDP protocol
  */
-//#define MEMP_NUM_SYS_TIMEOUT            (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_SUPPORT + (LWIP_IPV6 ? (1 + LWIP_IPV6_REASS + LWIP_IPV6_MLD) : 0)) + 1
+#define MEMP_NUM_SYS_TIMEOUT            (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_SUPPORT + (LWIP_IPV6 ? (1 + LWIP_IPV6_REASS + LWIP_IPV6_MLD) : 0)) + 10
 
 /**
  * MEMP_NUM_NETBUF: the number of struct netbufs.
@@ -203,12 +210,6 @@
 #define LWIP_ARP                        1
 
 #define ETH_PAD_SIZE                    2
-
-// Number of IPv4 neighbors to store
-#define ARP_TABLE_SIZE                  10
-
-// Number of IPv6 neighbors to store
-#define LWIP_ND6_NUM_NEIGHBORS          10
 
 /*
    --------------------------------
@@ -270,11 +271,6 @@
  */
 #define IP_DEFAULT_TTL                  255
 
-// Enable IPv6
-#define LWIP_IPV6	0
-// Needed to manage multicast groups for v6
-#define LWIP_IPV6_MLD   LWIP_IPV6
-
 /*
    --------------------------------------
    ---------- Checksum options ----------
@@ -290,7 +286,7 @@
 #define CHECKSUM_GEN_UDP                0
 #define CHECKSUM_GEN_TCP                0
 #define CHECKSUM_GEN_ICMP               0
-#define CHECKSUM_GEN_ICMP6              1
+#define CHECKSUM_GEN_ICMP6              0
 #endif
 
 #define CHECKSUM_CHECK_IP               0
@@ -519,11 +515,15 @@
 
 //#define LWIP_HTTPD_SSI                 1
 
-#define LWIP_HTTPD_CUSTOM_FILES        1
+#define LWIP_HTTPD_CUSTOM_FILES        0
 
 #define LWIP_HTTPD_DYNAMIC_FILE_READ   1
 
 #define HTTPD_USE_CUSTOM_FSDATA        1
+
+#define LWIP_HTTPD_SUPPORT_11_KEEPALIVE 1
+
+#define LWIP_HTTPD_SUPPORT_V09 0
 
 /*
    ---------------------------------------

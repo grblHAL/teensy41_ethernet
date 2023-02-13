@@ -1,5 +1,7 @@
 ## Teensy 4.1 ethernet :: https://forum.pjrc.com/threads/59776-Ethernet-and-lwip
 
+Updated to lwIP 2.1.3, lwipopts.h modified for [grblHAL iuMXRT1062 driver](https://github.com/grblHAL/iMXRT1062).
+
 put this repo in your sketchbook/libraries/
 
 - libraries/lwip-ftpd-sd/    put this in your sketchbook/libraries/  for ftpd
@@ -33,9 +35,6 @@ https://forum.pjrc.com/threads/34808-K66-Beta-Test?p=109161&viewfull=1#post10916
 ### Settings
 
 To enable ipv6, edit src/lwipopts.h and change LWIP_IPV6 to 1
-
-### TODO
-- update lwIP
 
 --------------------------------------------------------------------
 
